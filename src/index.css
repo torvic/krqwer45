@@ -15,7 +15,6 @@ ul {
   background-color: #f5f5f2;
   padding: 0;
   min-height: 50px;
-  border: 1px solid #DBDBD3;
 }
 
 ul li {
@@ -23,7 +22,6 @@ ul li {
   list-style-type: none;
   padding: 20px;
   cursor: pointer;
-  border-bottom: 1px solid #DBDBD3;
 }
 
 ul li:last-child {
@@ -44,5 +42,17 @@ input[type=text] {
 
 .error {
   border-color: #ff0000 !important;
+}
+
+.item {
+  border: 1px solid #ccc;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.item__button {
+	margin: 20px;
+	cursor: pointer;
 }
 

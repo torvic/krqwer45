@@ -13,7 +13,6 @@ class App extends Component {
       ],
       newTask: '',
       error: null,
-      toggle: false,
     }
   }
   handleSubmit = (e) => {
@@ -35,7 +34,16 @@ class App extends Component {
     }
   }
   handleChange = (e) => {
-    this.setState({ ...this.state, newTask: e.target.value, error: null })
+    this.setState({
+      ...this.state,
+      newTask: e.target.value,
+      error: null,
+    })
+  }
+  handleDelete = (task) => {
+    console.log('delete')
+    const taskFiltered = this.state.tasks.filter((el) => el.id !== task.id)
+    this.setState({ ...this.state, tasks: taskFiltered })
   }
   toggleTask = (task) => {
     const updateTask = { ...task, done: !task.done }
@@ -51,17 +59,28 @@ class App extends Component {
       <div className='wrapper'>
         <div className='list'>
           <h3>Por hacer:</h3>
-          <ul className='todo'>
-            {this.state.tasks.map((task, index) => (
-              <li
-                key={task.id}
-                onClick={() => this.toggleTask(task)}
-                className={task.done ? 'done' : null}
-              >
-                {task.name}
-              </li>
-            ))}
-          </ul>
+          {this.state.tasks.length ? (
+            <ul className='todo'>
+              {this.state.tasks.map((task, index) => (
+                <div className='item' key={task.id}>
+                  <li
+                    onClick={() => this.toggleTask(task)}
+                    className={task.done ? 'done' : null}
+                  >
+                    {task.name}
+                  </li>
+                  <button
+                    className='item__button'
+                    onClick={() => this.handleDelete(task)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay tareas aun ...</p>
+          )}
           <form onSubmit={this.handleSubmit}>
             <input
               className={this.state.error && 'error'}
