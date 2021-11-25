@@ -1,81 +1,79 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 
 /// Modifica el componente para que se puedan agregar tareas, tachar y destacharlas y error de validacion en el input
 
-class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      tasks: [
-        { id: 1, name: 'Sacar la ropa', done: false },
-        { id: 2, name: 'Hacer la cama', done: true },
-        { id: 3, name: 'Leer un rato', done: false },
-      ],
-      newTask: '',
-      error: null,
-      toggle: false,
-    }
-  }
-  handleSubmit = (e) => {
+const App = () => {
+  const [tasks, setTasks] = useState([])
+  const [error, setError] = useState(null)
+  const [newTask, setNewTask] = useState('')
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+  }, [])
+  const handleSubmit = (e) => {
     e.preventDefault()
-    if (this.state.newTask.length === 0) {
-      this.setState({ ...this.state, error: true })
+    if (newTask.length === 0) {
+      setError(true)
     } else {
-      this.setState({
-        tasks: [
-          ...this.state.tasks,
-          {
-            id: this.state.tasks.length + 1,
-            name: this.state.newTask,
-            done: false,
-          },
-        ],
-        newTask: '',
-      })
+      setTasks([
+        ...tasks,
+        { id: tasks.length + 2, title: newTask, completed: false },
+      ])
+			setNewTask('')
     }
   }
-  handleChange = (e) => {
-    this.setState({ ...this.state, newTask: e.target.value, error: null })
+  const handleChange = (e) => {
+    setNewTask(e.target.value)
   }
-  toggleTask = (task) => {
-    const updateTask = { ...task, done: !task.done }
-    this.setState({
-      ...this.state,
-      tasks: this.state.tasks.map((el) =>
-        el.id === task.id ? updateTask : el
-      ),
-    })
+  const handleDelete = (task) => {
+    const taskDeleted = tasks.filter((el) => el.id !== task.id)
+    setTasks(taskDeleted)
   }
-  render() {
-    return (
-      <div className='wrapper'>
-        <div className='list'>
-          <h3>Por hacer:</h3>
+  const toggleTask = (task) => {
+    const updateTask = { ...task, completed: !task.completed }
+    const tasksMapper = tasks.map((el) => (el.id === task.id ? updateTask : el))
+    setTasks(tasksMapper)
+  }
+  return (
+    <div className='wrapper'>
+      <div className='list'>
+        <h3>Por hacer:</h3>
+        {tasks.length ? (
           <ul className='todo'>
-            {this.state.tasks.map((task, index) => (
-              <li
-                key={task.id}
-                onClick={() => this.toggleTask(task)}
-                className={task.done ? 'done' : null}
-              >
-                {task.name}
-              </li>
+            {tasks.map((task, index) => (
+              <div className='item' key={task.id}>
+                <li
+                  onClick={() => toggleTask(task)}
+                  className={task.completed ? 'done' : null}
+                >
+                  {task.title}
+                </li>
+                <button
+                  className='item__button'
+                  onClick={() => handleDelete(task)}
+                >
+                  X
+                </button>
+              </div>
             ))}
           </ul>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              className={this.state.error && 'error'}
-              type='text'
-              onChange={this.handleChange}
-              id='new-task'
-              placeholder='Ingresa una tarea y oprime Enter'
-              value={this.state.newTask}
-            />
-          </form>
-        </div>
+        ) : (
+          <p>No hay tareas aun ...</p>
+        )}
+        <form onSubmit={handleSubmit}>
+          <input
+            className={error && 'error'}
+            type='text'
+            onChange={handleChange}
+            id='new-task'
+            placeholder='Ingresa una tarea y oprime Enter'
+            value={newTask}
+          />
+        </form>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default App
