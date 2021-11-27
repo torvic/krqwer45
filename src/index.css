@@ -1,48 +1,12 @@
-body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+td,
+th {
+  border: 1px solid #999;
+  padding: 0.5rem;
 }
 
-.list {
-  display: inline-block;
-  width: 330px;
-
-  vertical-align: top;
-  margin: 0 50px;
+.actions {
+  margin: 8px 0;
 }
-
-ul {
-  font-size: 18px;
-  background-color: #f5f5f2;
-  padding: 0;
-  min-height: 50px;
-  border: 1px solid #DBDBD3;
+.btn {
+  margin-left: 5px;
 }
-
-ul li {
-  color: #66665D;
-  list-style-type: none;
-  padding: 20px;
-  cursor: pointer;
-  border-bottom: 1px solid #DBDBD3;
-}
-
-ul li:last-child {
-  border-bottom: none;
-}
-
-ul li.done {
-  text-decoration: line-through;
-}
-
-input[type=text] {
-  box-sizing: border-box;
-  font-size: 16px;
-  width: 100%;
-  border: 1px solid #ccc;
-  padding: 13px;
-}
-
-.error {
-  border-color: #ff0000 !important;
-}
-

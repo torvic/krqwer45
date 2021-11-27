@@ -1,81 +1,21 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './views/Home'
+import Details from './views/Details'
+import DetailsFilms from './views/DetailsFilms'
+import DetailsVehicles from './views/DetailsVehicles'
 
-/// Modifica el componente para que se puedan agregar tareas, tachar y destacharlas y error de validacion en el input
-
-class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      tasks: [
-        { id: 1, name: 'Sacar la ropa', done: false },
-        { id: 2, name: 'Hacer la cama', done: true },
-        { id: 3, name: 'Leer un rato', done: false },
-      ],
-      newTask: '',
-      error: null,
-      toggle: false,
-    }
-  }
-  handleSubmit = (e) => {
-    e.preventDefault()
-    if (this.state.newTask.length === 0) {
-      this.setState({ ...this.state, error: true })
-    } else {
-      this.setState({
-        tasks: [
-          ...this.state.tasks,
-          {
-            id: this.state.tasks.length + 1,
-            name: this.state.newTask,
-            done: false,
-          },
-        ],
-        newTask: '',
-      })
-    }
-  }
-  handleChange = (e) => {
-    this.setState({ ...this.state, newTask: e.target.value, error: null })
-  }
-  toggleTask = (task) => {
-    const updateTask = { ...task, done: !task.done }
-    this.setState({
-      ...this.state,
-      tasks: this.state.tasks.map((el) =>
-        el.id === task.id ? updateTask : el
-      ),
-    })
-  }
-  render() {
-    return (
-      <div className='wrapper'>
-        <div className='list'>
-          <h3>Por hacer:</h3>
-          <ul className='todo'>
-            {this.state.tasks.map((task, index) => (
-              <li
-                key={task.id}
-                onClick={() => this.toggleTask(task)}
-                className={task.done ? 'done' : null}
-              >
-                {task.name}
-              </li>
-            ))}
-          </ul>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              className={this.state.error && 'error'}
-              type='text'
-              onChange={this.handleChange}
-              id='new-task'
-              placeholder='Ingresa una tarea y oprime Enter'
-              value={this.state.newTask}
-            />
-          </form>
-        </div>
-      </div>
-    )
-  }
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/details/:id' element={<Details />} />
+        <Route path='/details-films/:id' element={<DetailsFilms />} />
+        <Route path='/details-vehicles/:id' element={<DetailsVehicles />} />
+      </Routes>
+    </Router>
+  )
 }
 
 export default App
