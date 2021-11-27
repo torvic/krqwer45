@@ -1,81 +1,67 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
 
 /// Modifica el componente para que se puedan agregar tareas, tachar y destacharlas y error de validacion en el input
 
-class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      tasks: [
-        { id: 1, name: 'Sacar la ropa', done: false },
-        { id: 2, name: 'Hacer la cama', done: true },
-        { id: 3, name: 'Leer un rato', done: false },
-      ],
-      newTask: '',
-      error: null,
-      toggle: false,
-    }
+const App = () => {
+  const [dbPeople, setDbPeople] = useState(null)
+  useEffect(() => {
+    fetch('https://swapi.dev/api/people/?page=1')
+      .then((res) => res.json())
+      .then((data) => setDbPeople(data))
+  }, [])
+  const handleNext = () => {
+    const urlNext = dbPeople && dbPeople.next
+    console.log('next', urlNext)
+    fetch(urlNext)
+      .then((res) => res.json())
+      .then((data) => setDbPeople(data))
   }
-  handleSubmit = (e) => {
-    e.preventDefault()
-    if (this.state.newTask.length === 0) {
-      this.setState({ ...this.state, error: true })
-    } else {
-      this.setState({
-        tasks: [
-          ...this.state.tasks,
-          {
-            id: this.state.tasks.length + 1,
-            name: this.state.newTask,
-            done: false,
-          },
-        ],
-        newTask: '',
-      })
-    }
+  const handlePrevious = () => {
+    const urlPrevious = dbPeople && dbPeople.previous
+    console.log('prev', urlPrevious)
+    fetch(urlPrevious)
+      .then((res) => res.json())
+      .then((data) => setDbPeople(data))
   }
-  handleChange = (e) => {
-    this.setState({ ...this.state, newTask: e.target.value, error: null })
-  }
-  toggleTask = (task) => {
-    const updateTask = { ...task, done: !task.done }
-    this.setState({
-      ...this.state,
-      tasks: this.state.tasks.map((el) =>
-        el.id === task.id ? updateTask : el
-      ),
-    })
-  }
-  render() {
-    return (
-      <div className='wrapper'>
-        <div className='list'>
-          <h3>Por hacer:</h3>
-          <ul className='todo'>
-            {this.state.tasks.map((task, index) => (
-              <li
-                key={task.id}
-                onClick={() => this.toggleTask(task)}
-                className={task.done ? 'done' : null}
-              >
-                {task.name}
-              </li>
-            ))}
-          </ul>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              className={this.state.error && 'error'}
-              type='text'
-              onChange={this.handleChange}
-              id='new-task'
-              placeholder='Ingresa una tarea y oprime Enter'
-              value={this.state.newTask}
-            />
-          </form>
+  return (
+    <div>
+      <h1>Paginacion API de Star Wars</h1>
+      {dbPeople && (
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Genero</th>
+                <th>Año de Nacimiento</th>
+                <th>Altura</th>
+                <th>Peso</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dbPeople.results.map((el) => (
+                <tr key={el.name}>
+                  <td>{el.name}</td>
+                  <td>{el.gender}</td>
+                  <td>{el.birth_year}</td>
+                  <td>{el.height}</td>
+                  <td>{el.mass}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className='actions'>
+            <button onClick={handlePrevious} disabled={!dbPeople.previous}>
+              Atras
+            </button>
+            <button className='btn' onClick={handleNext} disabled={!dbPeople.next}>
+              Siguiente
+            </button>
+          </div>
         </div>
-      </div>
-    )
-  }
+      )}
+    </div>
+  )
 }
 
 export default App
